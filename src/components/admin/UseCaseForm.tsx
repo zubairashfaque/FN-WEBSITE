@@ -185,18 +185,35 @@ const UseCaseForm = () => {
     setSearchParams(newSearchParams);
   };
 
+  // Modified handleIndustryChange to ensure arrays
   const handleIndustryChange = (value: string[]) => {
-    setFormData((prev) => ({ ...prev, industries: value }));
+    console.log("handleIndustryChange received:", value, typeof value, Array.isArray(value));
+    
+    // Ensure value is always an array
+    const safeValue = Array.isArray(value) ? value : 
+                     (value ? [value].flat() : []);
+    
+    console.log("Setting industries to:", safeValue);
+    setFormData((prev) => ({ ...prev, industries: safeValue }));
   };
 
+  // Modified handleCategoryChange to ensure arrays
   const handleCategoryChange = (value: string[]) => {
-    setFormData((prev) => ({ ...prev, categories: value }));
+    console.log("handleCategoryChange received:", value, typeof value, Array.isArray(value));
+    
+    // Ensure value is always an array
+    const safeValue = Array.isArray(value) ? value : 
+                     (value ? [value].flat() : []);
+    
+    console.log("Setting categories to:", safeValue);
+    setFormData((prev) => ({ ...prev, categories: safeValue }));
   };
 
   const handleStatusChange = (value: string) => {
     setFormData((prev) => ({ ...prev, status: value }));
   };
 
+  // Modified handleSubmit to ensure array data
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -288,11 +305,18 @@ const UseCaseForm = () => {
       }
 
       // Create the final form data with the prepared content and image
+      // Ensure arrays are arrays
       const finalFormData = {
         ...formData,
         content: finalContent,
         imageUrl: finalImageUrl,
+        industries: Array.isArray(formData.industries) ? formData.industries : 
+                  (formData.industries ? [formData.industries].flat() : []),
+        categories: Array.isArray(formData.categories) ? formData.categories : 
+                  (formData.categories ? [formData.categories].flat() : [])
       };
+
+      console.log("Final form data before submission:", finalFormData);
 
       if (isEditMode && id) {
         // Update existing use case
