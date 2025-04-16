@@ -55,68 +55,86 @@ function debugValue(label: string, value: any) {
     isArray: Array.isArray(value),
     constructor: value?.constructor?.name,
     toString: String(value),
-    ...(typeof value === 'object' && value !== null 
-      ? { keys: Object.keys(value) } 
-      : {})
+    ...(typeof value === "object" && value !== null
+      ? { keys: Object.keys(value) }
+      : {}),
   });
 }
 
 // This function makes the ensureArray function even more robust
 // by adding additional type checks and error handling
-export function safeEnsureArray(value: any, fieldName: string = "unknown"): string[] {
+export function safeEnsureArray(
+  value: any,
+  fieldName: string = "unknown",
+): string[] {
   try {
     // Log the input for debugging
     debugValue(`safeEnsureArray input (${fieldName})`, value);
-    
+
     // Handle null/undefined cases
     if (value === null || value === undefined) {
-      console.log(`safeEnsureArray: ${fieldName} is null or undefined, returning empty array`);
+      console.log(
+        `safeEnsureArray: ${fieldName} is null or undefined, returning empty array`,
+      );
       return [];
     }
-    
+
     // Already an array - validate each element is a string
     if (Array.isArray(value)) {
-      const result = value.map(item => String(item));
-      console.log(`safeEnsureArray: ${fieldName} was already an array with ${result.length} items`);
+      const result = value.map((item) => String(item));
+      console.log(
+        `safeEnsureArray: ${fieldName} was already an array with ${result.length} items`,
+      );
       return result;
     }
-    
+
     // Handle string values that might be JSON
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       // Check if it looks like a JSON array
-      if (value.trim().startsWith('[') && value.trim().endsWith(']')) {
+      if (value.trim().startsWith("[") && value.trim().endsWith("]")) {
         try {
           const parsed = JSON.parse(value);
           if (Array.isArray(parsed)) {
-            const result = parsed.map(item => String(item));
-            console.log(`safeEnsureArray: Successfully parsed ${fieldName} string as JSON array with ${result.length} items`);
+            const result = parsed.map((item) => String(item));
+            console.log(
+              `safeEnsureArray: Successfully parsed ${fieldName} string as JSON array with ${result.length} items`,
+            );
             return result;
           } else {
-            console.log(`safeEnsureArray: Parsed ${fieldName} as JSON but result is not an array, wrapping single value`);
+            console.log(
+              `safeEnsureArray: Parsed ${fieldName} as JSON but result is not an array, wrapping single value`,
+            );
             return [String(value)];
           }
         } catch (e) {
           // If it fails to parse as JSON, just treat as string
-          console.log(`safeEnsureArray: Failed to parse ${fieldName} as JSON despite brackets, treating as string`);
+          console.log(
+            `safeEnsureArray: Failed to parse ${fieldName} as JSON despite brackets, treating as string`,
+          );
           return [value];
         }
       } else {
         // Just a regular string
-        console.log(`safeEnsureArray: ${fieldName} is a regular string, wrapping as array item`);
+        console.log(
+          `safeEnsureArray: ${fieldName} is a regular string, wrapping as array item`,
+        );
         return [value];
       }
     }
-    
+
     // Handle objects - could be a serialized structure
-    if (typeof value === 'object') {
-      console.log(`safeEnsureArray: ${fieldName} is an object, converting to string and wrapping`);
+    if (typeof value === "object") {
+      console.log(
+        `safeEnsureArray: ${fieldName} is an object, converting to string and wrapping`,
+      );
       return [String(value)];
     }
-    
+
     // For any other type (number, boolean, etc.)
-    console.log(`safeEnsureArray: ${fieldName} is type ${typeof value}, converting to string and wrapping`);
+    console.log(
+      `safeEnsureArray: ${fieldName} is type ${typeof value}, converting to string and wrapping`,
+    );
     return [String(value)];
-    
   } catch (error) {
     console.error(`safeEnsureArray ERROR for ${fieldName}:`, error);
     // Always return a valid array even on error
@@ -140,18 +158,20 @@ export const getUseCases = async (): Promise<UseCase[]> => {
       const useCases = JSON.parse(
         localStorage.getItem(USECASES_STORAGE_KEY) || "[]",
       ) as UseCase[];
-      
+
       // Ensure all useCase objects have industries and categories as arrays
-      const normalizedUseCases = useCases.map(useCase => ({
+      const normalizedUseCases = useCases.map((useCase) => ({
         ...useCase,
-        industries: ensureArray(useCase.industries).length > 0 
-          ? ensureArray(useCase.industries) 
-          : [useCase.industry].filter(Boolean),
-        categories: ensureArray(useCase.categories).length > 0 
-          ? ensureArray(useCase.categories)
-          : [useCase.category].filter(Boolean)
+        industries:
+          ensureArray(useCase.industries).length > 0
+            ? ensureArray(useCase.industries)
+            : [useCase.industry].filter(Boolean),
+        categories:
+          ensureArray(useCase.categories).length > 0
+            ? ensureArray(useCase.categories)
+            : [useCase.category].filter(Boolean),
       }));
-      
+
       console.log("Retrieved use cases from localStorage:", normalizedUseCases);
       return normalizedUseCases;
     } else {
@@ -168,26 +188,26 @@ export const getUseCases = async (): Promise<UseCase[]> => {
         // Parse industries and categories if they're stored as JSON strings
         let industries = [];
         let categories = [];
-        
+
         try {
           industries = ensureArray(useCase.industries);
         } catch (e) {
           console.warn("Could not parse industries for useCase:", useCase.id);
           industries = useCase.industry ? [useCase.industry] : [];
         }
-        
+
         try {
           categories = ensureArray(useCase.categories);
         } catch (e) {
           console.warn("Could not parse categories for useCase:", useCase.id);
           categories = useCase.category ? [useCase.category] : [];
         }
-        
+
         // Ensure we always have at least one industry and category
         if (industries.length === 0 && useCase.industry) {
           industries = [useCase.industry];
         }
-        
+
         if (categories.length === 0 && useCase.category) {
           categories = [useCase.category];
         }
@@ -197,8 +217,10 @@ export const getUseCases = async (): Promise<UseCase[]> => {
           title: useCase.title,
           description: useCase.description,
           content: useCase.content,
-          industry: useCase.industry || (industries.length > 0 ? industries[0] : ''),
-          category: useCase.category || (categories.length > 0 ? categories[0] : ''),
+          industry:
+            useCase.industry || (industries.length > 0 ? industries[0] : ""),
+          category:
+            useCase.category || (categories.length > 0 ? categories[0] : ""),
           industries,
           categories,
           imageUrl: useCase.image_url,
@@ -217,7 +239,7 @@ export const getUseCases = async (): Promise<UseCase[]> => {
 export const getUseCaseById = async (id: string): Promise<UseCase | null> => {
   try {
     console.log("Fetching use case with ID:", id);
-    
+
     const delay = Math.random() * 300 + 100; // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -227,26 +249,34 @@ export const getUseCaseById = async (id: string): Promise<UseCase | null> => {
         localStorage.getItem(USECASES_STORAGE_KEY) || "[]",
       ) as UseCase[];
       const useCase = useCases.find((useCase) => useCase.id === id);
-      
+
       if (!useCase) return null;
-      
+
       // Ensure industries and categories are arrays
-      const industriesArray = safeEnsureArray(useCase.industries, 'localstorage_get_industries');
-      const finalIndustries = industriesArray.length > 0 
-        ? industriesArray 
-        : [useCase.industry].filter(Boolean);
-      
-      const categoriesArray = safeEnsureArray(useCase.categories, 'localstorage_get_categories');
-      const finalCategories = categoriesArray.length > 0 
-        ? categoriesArray 
-        : [useCase.category].filter(Boolean);
-      
+      const industriesArray = safeEnsureArray(
+        useCase.industries,
+        "localstorage_get_industries",
+      );
+      const finalIndustries =
+        industriesArray.length > 0
+          ? industriesArray
+          : [useCase.industry].filter(Boolean);
+
+      const categoriesArray = safeEnsureArray(
+        useCase.categories,
+        "localstorage_get_categories",
+      );
+      const finalCategories =
+        categoriesArray.length > 0
+          ? categoriesArray
+          : [useCase.category].filter(Boolean);
+
       const result = {
         ...useCase,
         industries: finalIndustries,
         categories: finalCategories,
       };
-      
+
       console.log("Found use case in localStorage:", result);
       return result;
     } else {
@@ -264,16 +294,22 @@ export const getUseCaseById = async (id: string): Promise<UseCase | null> => {
 
       // Process the returned data using our safer array handling
       let industriesArray, categoriesArray;
-      
+
       try {
-        industriesArray = safeEnsureArray(data.industries, 'supabase_get_industries');
+        industriesArray = safeEnsureArray(
+          data.industries,
+          "supabase_get_industries",
+        );
       } catch (e) {
         console.warn("Could not parse industries from DB, using fallback", e);
         industriesArray = data.industry ? [data.industry] : [];
       }
-      
+
       try {
-        categoriesArray = safeEnsureArray(data.categories, 'supabase_get_categories');
+        categoriesArray = safeEnsureArray(
+          data.categories,
+          "supabase_get_categories",
+        );
       } catch (e) {
         console.warn("Could not parse categories from DB, using fallback", e);
         categoriesArray = data.category ? [data.category] : [];
@@ -281,19 +317,23 @@ export const getUseCaseById = async (id: string): Promise<UseCase | null> => {
 
       const result = {
         id: data.id,
-        title: data.title || '',
-        description: data.description || '',
-        content: data.content || '',
-        industry: data.industry || (industriesArray.length > 0 ? industriesArray[0] : ''),
-        category: data.category || (categoriesArray.length > 0 ? categoriesArray[0] : ''),
+        title: data.title || "",
+        description: data.description || "",
+        content: data.content || "",
+        industry:
+          data.industry ||
+          (industriesArray.length > 0 ? industriesArray[0] : ""),
+        category:
+          data.category ||
+          (categoriesArray.length > 0 ? categoriesArray[0] : ""),
         industries: industriesArray,
         categories: categoriesArray,
-        imageUrl: data.image_url || '',
-        status: data.status || 'draft',
+        imageUrl: data.image_url || "",
+        status: data.status || "draft",
         createdAt: data.created_at || new Date().toISOString(),
         updatedAt: data.updated_at || new Date().toISOString(),
       };
-      
+
       console.log("Returning processed use case:", result);
       return result;
     }
@@ -303,16 +343,13 @@ export const getUseCaseById = async (id: string): Promise<UseCase | null> => {
   }
 };
 
-// Modify this function in src/api/usecases.ts
-
 // Modified createUseCase function in src/api/usecases.ts
-
 export const createUseCase = async (
   data: UseCaseFormData,
 ): Promise<UseCase> => {
   try {
     console.log("Creating new use case with data:", data);
-    
+
     const delay = Math.random() * 800 + 400; // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -330,12 +367,18 @@ export const createUseCase = async (
     }
 
     // Use our safer array validation
-    const industriesArray = safeEnsureArray(data.industries, 'create_industries');
+    const industriesArray = safeEnsureArray(
+      data.industries,
+      "create_industries",
+    );
     if (industriesArray.length === 0) {
       throw new Error("At least one industry is required");
     }
 
-    const categoriesArray = safeEnsureArray(data.categories, 'create_categories');
+    const categoriesArray = safeEnsureArray(
+      data.categories,
+      "create_categories",
+    );
     if (categoriesArray.length === 0) {
       throw new Error("At least one category is required");
     }
@@ -354,9 +397,11 @@ export const createUseCase = async (
       ) as UseCase[];
 
       // Get primary industry and category (first one in each array)
-      const primaryIndustry = industriesArray.length > 0 ? industriesArray[0] : "";
-      const primaryCategory = categoriesArray.length > 0 ? categoriesArray[0] : "";
-        
+      const primaryIndustry =
+        industriesArray.length > 0 ? industriesArray[0] : "";
+      const primaryCategory =
+        categoriesArray.length > 0 ? categoriesArray[0] : "";
+
       console.log("Creating use case with industries:", industriesArray);
       console.log("Creating use case with categories:", categoriesArray);
 
@@ -377,132 +422,102 @@ export const createUseCase = async (
 
       useCases.push(newUseCase);
       localStorage.setItem(USECASES_STORAGE_KEY, JSON.stringify(useCases));
-      
+
       console.log("Created new use case:", newUseCase);
       return newUseCase;
     } else {
       // Use Supabase with explicit column types
-      
+
       // Get primary industry and category
-      const primaryIndustry = industriesArray.length > 0 ? industriesArray[0] : "";
-      const primaryCategory = categoriesArray.length > 0 ? categoriesArray[0] : "";
+      const primaryIndustry =
+        industriesArray.length > 0 ? industriesArray[0] : "";
+      const primaryCategory =
+        categoriesArray.length > 0 ? categoriesArray[0] : "";
 
       console.log("Creating use case with primary industry:", primaryIndustry);
       console.log("Creating use case with primary category:", primaryCategory);
 
-      // Create a clean database object - avoid any potential type issues
-      // CRITICAL FIX: Create a cleaner object with only the exact fields needed
+      // Create a clean database object with proper types for Supabase
       const dbData = {
         title: String(data.title),
         description: String(data.description),
         content: String(data.content),
         industry: String(primaryIndustry),
         category: String(primaryCategory),
-        // Store stringified JSON for array fields - BUT use the 'text' type for PostgreSQL compatibility
-        industries: JSON.stringify(industriesArray),
-        categories: JSON.stringify(categoriesArray),
+        // Store as JSONB arrays for PostgreSQL compatibility
+        industries: industriesArray,
+        categories: categoriesArray,
         image_url: String(imageUrl),
         status: String(data.status),
         created_at: now,
-        updated_at: now
+        updated_at: now,
       };
-      
+
       console.log("Final DB data:", dbData);
 
       try {
-        // First approach: Try inserting with RPC call to ensure proper typing
-        console.log("Attempting to insert with stored procedure...");
-        const { data: rpcResult, error: rpcError } = await supabase.rpc(
-          'create_use_case',
-          dbData
-        );
+        // Skip RPC approach and use direct insert
+        console.log("Using direct insert for use case");
 
-        // If RPC not available, fall back to direct insert
-        if (rpcError) {
-          console.log("RPC not available, falling back to direct insert");
-          console.log("RPC error:", rpcError);
-          
-          // Specifically handle the industries and categories columns  
-          // Try an alternative approach: send as text values rather than JSON
-          const insertData = {
-            ...dbData,
-            // Store as text if JSON is causing issues
-            industries: String(dbData.industries),
-            categories: String(dbData.categories)
-          };
-          
-          console.log("Modified insert data:", insertData);
-          
-          const { data: useCaseData, error } = await supabase
-            .from("usecases")
-            .insert(insertData)
-            .select("*")
-            .single();
+        const { data: useCaseData, error } = await supabase
+          .from("usecases")
+          .insert(dbData)
+          .select("*")
+          .single();
 
-          if (error) {
-            console.error("Supabase error:", error);
-            throw new Error(`Failed to create use case: ${error.message}`);
-          }
-
-          console.log("Use case created in DB:", useCaseData);
-
-          // Process the returned data using our safer array handling
-          let returnIndustriesArray, returnCategoriesArray;
-          
-          try {
-            returnIndustriesArray = safeEnsureArray(useCaseData.industries, 'returned_create_industries');
-          } catch (e) {
-            console.warn("Could not parse returned industries, using fallback", e);
-            returnIndustriesArray = [useCaseData.industry].filter(Boolean);
-          }
-          
-          try {
-            returnCategoriesArray = safeEnsureArray(useCaseData.categories, 'returned_create_categories');
-          } catch (e) {
-            console.warn("Could not parse returned categories, using fallback", e);
-            returnCategoriesArray = [useCaseData.category].filter(Boolean);
-          }
-
-          const result = {
-            id: useCaseData.id,
-            title: useCaseData.title,
-            description: useCaseData.description,
-            content: useCaseData.content,
-            industry: useCaseData.industry || '',
-            category: useCaseData.category || '',
-            industries: returnIndustriesArray,
-            categories: returnCategoriesArray,
-            imageUrl: useCaseData.image_url,
-            status: useCaseData.status,
-            createdAt: useCaseData.created_at,
-            updatedAt: useCaseData.updated_at,
-          };
-          
-          console.log("Returning processed new use case:", result);
-          return result;
-        } else {
-          // RPC was successful
-          console.log("Use case created via RPC:", rpcResult);
-          
-          // Return properly formatted data
-          const result = {
-            id: rpcResult.id,
-            title: rpcResult.title,
-            description: rpcResult.description,
-            content: rpcResult.content,
-            industry: rpcResult.industry || '',
-            category: rpcResult.category || '',
-            industries: safeEnsureArray(rpcResult.industries, 'rpc_returned_industries'),
-            categories: safeEnsureArray(rpcResult.categories, 'rpc_returned_categories'),
-            imageUrl: rpcResult.image_url,
-            status: rpcResult.status,
-            createdAt: rpcResult.created_at,
-            updatedAt: rpcResult.updated_at,
-          };
-          
-          console.log("Returning processed new use case:", result);
-          return result;
+        if (error) {
+          console.error("Supabase error:", error);
+          throw new Error(`Failed to create use case: ${error.message}`);
         }
+
+        console.log("Use case created in DB:", useCaseData);
+
+        // Process the returned data using our safer array handling
+        let returnIndustriesArray, returnCategoriesArray;
+
+        try {
+          returnIndustriesArray = safeEnsureArray(
+            useCaseData.industries,
+            "returned_create_industries",
+          );
+        } catch (e) {
+          console.warn(
+            "Could not parse returned industries, using fallback",
+            e,
+          );
+          returnIndustriesArray = [useCaseData.industry].filter(Boolean);
+        }
+
+        try {
+          returnCategoriesArray = safeEnsureArray(
+            useCaseData.categories,
+            "returned_create_categories",
+          );
+        } catch (e) {
+          console.warn(
+            "Could not parse returned categories, using fallback",
+            e,
+          );
+          returnCategoriesArray = [useCaseData.category].filter(Boolean);
+        }
+
+        const result = {
+          id: useCaseData.id,
+          title: useCaseData.title,
+          description: useCaseData.description,
+          content: useCaseData.content,
+          industry: useCaseData.industry || "",
+          category: useCaseData.category || "",
+          industries: returnIndustriesArray,
+          categories: returnCategoriesArray,
+          imageUrl: useCaseData.image_url,
+          status: useCaseData.status,
+          createdAt: useCaseData.created_at,
+          updatedAt: useCaseData.updated_at,
+        };
+
+        console.log("Returning processed new use case:", result);
+        return result;
       } catch (innerError) {
         console.error("Error in Supabase operation:", innerError);
         throw innerError;
@@ -515,6 +530,7 @@ export const createUseCase = async (
     );
   }
 };
+
 export const updateUseCase = async (
   id: string,
   data: Partial<UseCaseFormData>,
@@ -522,7 +538,7 @@ export const updateUseCase = async (
   try {
     console.log("Updating use case with ID:", id);
     console.log("Update data:", data);
-    
+
     const delay = Math.random() * 800 + 400; // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -540,22 +556,30 @@ export const updateUseCase = async (
       }
 
       const useCase = useCases[useCaseIndex];
-      
+
       // Use our safer array handling
-      let industriesArray = safeEnsureArray(useCase.industries || [], 'existing_industries');
+      let industriesArray = safeEnsureArray(
+        useCase.industries || [],
+        "existing_industries",
+      );
       if (data.industries !== undefined) {
-        industriesArray = safeEnsureArray(data.industries, 'new_industries');
+        industriesArray = safeEnsureArray(data.industries, "new_industries");
       }
-      
-      let categoriesArray = safeEnsureArray(useCase.categories || [], 'existing_categories');
+
+      let categoriesArray = safeEnsureArray(
+        useCase.categories || [],
+        "existing_categories",
+      );
       if (data.categories !== undefined) {
-        categoriesArray = safeEnsureArray(data.categories, 'new_categories');
+        categoriesArray = safeEnsureArray(data.categories, "new_categories");
       }
-      
+
       // Get primary values from arrays
-      const primaryIndustry = industriesArray.length > 0 ? industriesArray[0] : "";
-      const primaryCategory = categoriesArray.length > 0 ? categoriesArray[0] : "";
-      
+      const primaryIndustry =
+        industriesArray.length > 0 ? industriesArray[0] : "";
+      const primaryCategory =
+        categoriesArray.length > 0 ? categoriesArray[0] : "";
+
       const updatedUseCase: UseCase = {
         ...useCase,
         title: data.title !== undefined ? data.title : useCase.title,
@@ -579,7 +603,7 @@ export const updateUseCase = async (
 
       useCases[useCaseIndex] = updatedUseCase;
       localStorage.setItem(USECASES_STORAGE_KEY, JSON.stringify(useCases));
-      
+
       console.log("Updated use case in localStorage:", updatedUseCase);
       return updatedUseCase;
     } else {
@@ -590,52 +614,68 @@ export const updateUseCase = async (
       if (data.description !== undefined)
         updateData.description = data.description;
       if (data.content !== undefined) updateData.content = data.content;
-      
+
       // Handle arrays in Supabase
       if (data.industries !== undefined) {
         // Use our safer array handling
-        const industriesArray = safeEnsureArray(data.industries, 'industries_to_update');
-        
+        const industriesArray = safeEnsureArray(
+          data.industries,
+          "industries_to_update",
+        );
+
         // Debug logging
         console.log("Updating industries:", industriesArray);
-        console.log("Industries type:", typeof industriesArray, Array.isArray(industriesArray));
-        
+        console.log(
+          "Industries type:",
+          typeof industriesArray,
+          Array.isArray(industriesArray),
+        );
+
         // CRITICAL: Make sure we're storing a valid JSON string
         try {
-          updateData.industries = JSON.stringify(industriesArray);
+          updateData.industries = industriesArray;
           console.log("Stringified industries:", updateData.industries);
         } catch (e) {
           console.error("Failed to stringify industries:", e);
           // Fallback to empty array
           updateData.industries = "[]";
         }
-        
+
         // Also update the primary industry field
-        updateData.industry = industriesArray.length > 0 ? industriesArray[0] : "";
+        updateData.industry =
+          industriesArray.length > 0 ? industriesArray[0] : "";
       }
-      
+
       if (data.categories !== undefined) {
         // Use our safer array handling
-        const categoriesArray = safeEnsureArray(data.categories, 'categories_to_update');
-        
+        const categoriesArray = safeEnsureArray(
+          data.categories,
+          "categories_to_update",
+        );
+
         // Debug logging
         console.log("Updating categories:", categoriesArray);
-        console.log("Categories type:", typeof categoriesArray, Array.isArray(categoriesArray));
-        
+        console.log(
+          "Categories type:",
+          typeof categoriesArray,
+          Array.isArray(categoriesArray),
+        );
+
         // CRITICAL: Make sure we're storing a valid JSON string
         try {
-          updateData.categories = JSON.stringify(categoriesArray);
+          updateData.categories = categoriesArray;
           console.log("Stringified categories:", updateData.categories);
         } catch (e) {
           console.error("Failed to stringify categories:", e);
           // Fallback to empty array
           updateData.categories = "[]";
         }
-        
+
         // Also update the primary category field
-        updateData.category = categoriesArray.length > 0 ? categoriesArray[0] : "";
+        updateData.category =
+          categoriesArray.length > 0 ? categoriesArray[0] : "";
       }
-      
+
       if (data.imageUrl !== undefined) updateData.image_url = data.imageUrl;
       if (data.status !== undefined) updateData.status = data.status;
 
@@ -658,16 +698,22 @@ export const updateUseCase = async (
       // Process the returned data using our safer array handling
       let industriesArray = [];
       let categoriesArray = [];
-      
+
       try {
-        industriesArray = safeEnsureArray(useCaseData.industries, 'returned_industries');
+        industriesArray = safeEnsureArray(
+          useCaseData.industries,
+          "returned_industries",
+        );
       } catch (e) {
         console.warn("Could not parse industries, using fallback", e);
         industriesArray = useCaseData.industry ? [useCaseData.industry] : [];
       }
-      
+
       try {
-        categoriesArray = safeEnsureArray(useCaseData.categories, 'returned_categories');
+        categoriesArray = safeEnsureArray(
+          useCaseData.categories,
+          "returned_categories",
+        );
       } catch (e) {
         console.warn("Could not parse categories, using fallback", e);
         categoriesArray = useCaseData.category ? [useCaseData.category] : [];
@@ -676,19 +722,19 @@ export const updateUseCase = async (
       // Build the final response object
       const result = {
         id: useCaseData.id,
-        title: useCaseData.title || '',
-        description: useCaseData.description || '',
-        content: useCaseData.content || '',
-        industry: useCaseData.industry || '',
-        category: useCaseData.category || '',
+        title: useCaseData.title || "",
+        description: useCaseData.description || "",
+        content: useCaseData.content || "",
+        industry: useCaseData.industry || "",
+        category: useCaseData.category || "",
         industries: industriesArray,
         categories: categoriesArray,
-        imageUrl: useCaseData.image_url || '',
-        status: useCaseData.status || 'draft',
+        imageUrl: useCaseData.image_url || "",
+        status: useCaseData.status || "draft",
         createdAt: useCaseData.created_at || now,
         updatedAt: useCaseData.updated_at || now,
       };
-      
+
       console.log("Returning processed use case:", result);
       return result;
     }
