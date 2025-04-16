@@ -47,19 +47,36 @@ export const generateSlug = (title: string): string => {
     .replace(/\s+/g, "-");
 };
 
-// Helper function to ensure consistent array handling
+// Enhanced version of ensureArray with better type checking
 export function ensureArray(value: any): string[] {
-  if (!value) return [];
-  if (Array.isArray(value)) return value;
+  // If the value is null or undefined, return empty array
+  if (value === null || value === undefined) {
+    return [];
+  }
+  
+  // If it's already an array, return it as is
+  if (Array.isArray(value)) {
+    return value;
+  }
+  
+  // If it's a string, try to parse it as JSON
   if (typeof value === 'string') {
     try {
       const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed : [value];
+      // If parsing succeeds and the result is an array, return it
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+      // If parsing succeeds but result is not an array, wrap it
+      return [value];
     } catch (e) {
+      // If it's not valid JSON, treat it as a single item
       return [value];
     }
   }
-  return [value];
+  
+  // For any other type, wrap it in an array
+  return [String(value)];
 }
 
 // CRUD operations for use cases
@@ -378,6 +395,8 @@ export const createUseCase = async (
   }
 };
 
+// Updated updateUseCase function with improved type handling
+
 export const updateUseCase = async (
   id: string,
   data: Partial<UseCaseFormData>,
@@ -402,12 +421,12 @@ export const updateUseCase = async (
       const useCase = useCases[useCaseIndex];
       
       // Ensure we handle industries and categories as arrays
-      let industriesArray = useCase.industries;
+      let industriesArray = useCase.industries || [];
       if (data.industries !== undefined) {
         industriesArray = ensureArray(data.industries);
       }
       
-      let categoriesArray = useCase.categories;
+      let categoriesArray = useCase.categories || [];
       if (data.categories !== undefined) {
         categoriesArray = ensureArray(data.categories);
       }
@@ -508,14 +527,14 @@ export const updateUseCase = async (
         industriesArray = ensureArray(useCaseData.industries);
       } catch (e) {
         console.warn("Could not parse industries, using fallback", e);
-        industriesArray = [useCaseData.industry].filter(Boolean);
+        industriesArray = useCaseData.industry ? [useCaseData.industry] : [];
       }
       
       try {
         categoriesArray = ensureArray(useCaseData.categories);
       } catch (e) {
         console.warn("Could not parse categories, using fallback", e);
-        categoriesArray = [useCaseData.category].filter(Boolean);
+        categoriesArray = useCaseData.category ? [useCaseData.category] : [];
       }
 
       return {
@@ -523,8 +542,8 @@ export const updateUseCase = async (
         title: useCaseData.title,
         description: useCaseData.description,
         content: useCaseData.content,
-        industry: useCaseData.industry,
-        category: useCaseData.category,
+        industry: useCaseData.industry || '',
+        category: useCaseData.category || '',
         industries: industriesArray,
         categories: categoriesArray,
         imageUrl: useCaseData.image_url,
@@ -542,7 +561,6 @@ export const updateUseCase = async (
     );
   }
 };
-
 export const deleteUseCase = async (id: string): Promise<void> => {
   try {
     const delay = Math.random() * 500 + 200; // Simulate network delay
