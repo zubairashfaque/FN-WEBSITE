@@ -305,6 +305,8 @@ export const getUseCaseById = async (id: string): Promise<UseCase | null> => {
 
 // Modify this function in src/api/usecases.ts
 
+// Modified createUseCase function in src/api/usecases.ts
+
 export const createUseCase = async (
   data: UseCaseFormData,
 ): Promise<UseCase> => {
@@ -379,91 +381,128 @@ export const createUseCase = async (
       console.log("Created new use case:", newUseCase);
       return newUseCase;
     } else {
-      // Use Supabase
-      // CRITICAL: Make sure we're storing valid JSON strings
-      // Force proper stringification of arrays
-      const industriesString = JSON.stringify(industriesArray);
-      console.log("Stringified industries for DB:", industriesString);
-      
-      const categoriesString = JSON.stringify(categoriesArray);
-      console.log("Stringified categories for DB:", categoriesString);
+      // Use Supabase with explicit column types
       
       // Get primary industry and category
-      const primaryIndustry = industriesArray.length > 0 
-        ? industriesArray[0] 
-        : "";
-      const primaryCategory = categoriesArray.length > 0 
-        ? categoriesArray[0] 
-        : "";
+      const primaryIndustry = industriesArray.length > 0 ? industriesArray[0] : "";
+      const primaryCategory = categoriesArray.length > 0 ? categoriesArray[0] : "";
 
       console.log("Creating use case with primary industry:", primaryIndustry);
       console.log("Creating use case with primary category:", primaryCategory);
 
-      // Create the data object manually to ensure proper formatting
+      // Create a clean database object - avoid any potential type issues
+      // CRITICAL FIX: Create a cleaner object with only the exact fields needed
       const dbData = {
-        title: data.title,
-        description: data.description,
-        content: data.content,
-        industry: primaryIndustry,
-        category: primaryCategory,
-        industries: industriesString, // Send as properly formatted JSON string
-        categories: categoriesString, // Send as properly formatted JSON string
-        image_url: imageUrl,
-        status: data.status,
+        title: String(data.title),
+        description: String(data.description),
+        content: String(data.content),
+        industry: String(primaryIndustry),
+        category: String(primaryCategory),
+        // Store stringified JSON for array fields - BUT use the 'text' type for PostgreSQL compatibility
+        industries: JSON.stringify(industriesArray),
+        categories: JSON.stringify(categoriesArray),
+        image_url: String(imageUrl),
+        status: String(data.status),
         created_at: now,
-        updated_at: now,
+        updated_at: now
       };
       
       console.log("Final DB data:", dbData);
 
       try {
-        const { data: useCaseData, error } = await supabase
-          .from("usecases")
-          .insert(dbData)
-          .select("*")
-          .single();
+        // First approach: Try inserting with RPC call to ensure proper typing
+        console.log("Attempting to insert with stored procedure...");
+        const { data: rpcResult, error: rpcError } = await supabase.rpc(
+          'create_use_case',
+          dbData
+        );
 
-        if (error) {
-          console.error("Supabase error:", error);
-          throw new Error(`Failed to create use case: ${error.message}`);
+        // If RPC not available, fall back to direct insert
+        if (rpcError) {
+          console.log("RPC not available, falling back to direct insert");
+          console.log("RPC error:", rpcError);
+          
+          // Specifically handle the industries and categories columns  
+          // Try an alternative approach: send as text values rather than JSON
+          const insertData = {
+            ...dbData,
+            // Store as text if JSON is causing issues
+            industries: String(dbData.industries),
+            categories: String(dbData.categories)
+          };
+          
+          console.log("Modified insert data:", insertData);
+          
+          const { data: useCaseData, error } = await supabase
+            .from("usecases")
+            .insert(insertData)
+            .select("*")
+            .single();
+
+          if (error) {
+            console.error("Supabase error:", error);
+            throw new Error(`Failed to create use case: ${error.message}`);
+          }
+
+          console.log("Use case created in DB:", useCaseData);
+
+          // Process the returned data using our safer array handling
+          let returnIndustriesArray, returnCategoriesArray;
+          
+          try {
+            returnIndustriesArray = safeEnsureArray(useCaseData.industries, 'returned_create_industries');
+          } catch (e) {
+            console.warn("Could not parse returned industries, using fallback", e);
+            returnIndustriesArray = [useCaseData.industry].filter(Boolean);
+          }
+          
+          try {
+            returnCategoriesArray = safeEnsureArray(useCaseData.categories, 'returned_create_categories');
+          } catch (e) {
+            console.warn("Could not parse returned categories, using fallback", e);
+            returnCategoriesArray = [useCaseData.category].filter(Boolean);
+          }
+
+          const result = {
+            id: useCaseData.id,
+            title: useCaseData.title,
+            description: useCaseData.description,
+            content: useCaseData.content,
+            industry: useCaseData.industry || '',
+            category: useCaseData.category || '',
+            industries: returnIndustriesArray,
+            categories: returnCategoriesArray,
+            imageUrl: useCaseData.image_url,
+            status: useCaseData.status,
+            createdAt: useCaseData.created_at,
+            updatedAt: useCaseData.updated_at,
+          };
+          
+          console.log("Returning processed new use case:", result);
+          return result;
+        } else {
+          // RPC was successful
+          console.log("Use case created via RPC:", rpcResult);
+          
+          // Return properly formatted data
+          const result = {
+            id: rpcResult.id,
+            title: rpcResult.title,
+            description: rpcResult.description,
+            content: rpcResult.content,
+            industry: rpcResult.industry || '',
+            category: rpcResult.category || '',
+            industries: safeEnsureArray(rpcResult.industries, 'rpc_returned_industries'),
+            categories: safeEnsureArray(rpcResult.categories, 'rpc_returned_categories'),
+            imageUrl: rpcResult.image_url,
+            status: rpcResult.status,
+            createdAt: rpcResult.created_at,
+            updatedAt: rpcResult.updated_at,
+          };
+          
+          console.log("Returning processed new use case:", result);
+          return result;
         }
-
-        console.log("Use case created in DB:", useCaseData);
-
-        // Process the returned data using our safer array handling
-        let returnIndustriesArray, returnCategoriesArray;
-        
-        try {
-          returnIndustriesArray = safeEnsureArray(useCaseData.industries, 'returned_create_industries');
-        } catch (e) {
-          console.warn("Could not parse returned industries, using fallback", e);
-          returnIndustriesArray = [useCaseData.industry].filter(Boolean);
-        }
-        
-        try {
-          returnCategoriesArray = safeEnsureArray(useCaseData.categories, 'returned_create_categories');
-        } catch (e) {
-          console.warn("Could not parse returned categories, using fallback", e);
-          returnCategoriesArray = [useCaseData.category].filter(Boolean);
-        }
-
-        const result = {
-          id: useCaseData.id,
-          title: useCaseData.title,
-          description: useCaseData.description,
-          content: useCaseData.content,
-          industry: useCaseData.industry || '',
-          category: useCaseData.category || '',
-          industries: returnIndustriesArray,
-          categories: returnCategoriesArray,
-          imageUrl: useCaseData.image_url,
-          status: useCaseData.status,
-          createdAt: useCaseData.created_at,
-          updatedAt: useCaseData.updated_at,
-        };
-        
-        console.log("Returning processed new use case:", result);
-        return result;
       } catch (innerError) {
         console.error("Error in Supabase operation:", innerError);
         throw innerError;
@@ -476,7 +515,6 @@ export const createUseCase = async (
     );
   }
 };
-
 export const updateUseCase = async (
   id: string,
   data: Partial<UseCaseFormData>,
