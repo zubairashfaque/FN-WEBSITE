@@ -145,7 +145,9 @@ const UseCaseDetail = () => {
             <p className="mb-8 text-gray-600">
               We couldn't find the use case you're looking for.
             </p>
-            <Button onClick={() => navigate("/usecases")}>Back to Use Cases</Button>
+            <Button onClick={() => navigate("/usecases")}>
+              Back to Use Cases
+            </Button>
           </div>
         ) : (
           <article className="max-w-4xl mx-auto">
@@ -186,7 +188,9 @@ const UseCaseDetail = () => {
                 {useCase.title}
               </h1>
 
-              <p className="text-xl text-gray-600 mb-8">{useCase.description}</p>
+              <p className="text-xl text-gray-600 mb-8">
+                {useCase.description}
+              </p>
             </div>
 
             {useCase.imageUrl && (

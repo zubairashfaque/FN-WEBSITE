@@ -57,6 +57,9 @@ function App() {
     <AuthProvider>
       <Suspense fallback={<p>Loading...</p>}>
         <>
+          {/* For the tempo routes */}
+          {import.meta.env.VITE_TEMPO === "true" && tempoRoutesElement}
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<BlogPage />} />
@@ -142,8 +145,12 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Add this before any catchall route */}
+            {import.meta.env.VITE_TEMPO === "true" && (
+              <Route path="/tempobook/*" />
+            )}
           </Routes>
-          {tempoRoutesElement}
         </>
       </Suspense>
     </AuthProvider>
