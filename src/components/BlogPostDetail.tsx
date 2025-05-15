@@ -143,12 +143,15 @@ const BlogPostDetail = (props: BlogPostDetailProps) => {
         ) : (
           <article className="max-w-4xl mx-auto">
             {post.featuredImage && (
-              <div className="mb-8 rounded-lg overflow-hidden h-[400px]">
-                <img
-                  src={post.featuredImage}
-                  alt={post.title}
-                  className="w-full h-full object-cover"
-                />
+              <div className="mb-8 rounded-lg overflow-hidden">
+                <div className="mx-auto" style={{ maxWidth: "800px" }}>
+                  <img
+                    src={post.featuredImage}
+                    alt={post.title}
+                    className="max-w-full max-h-[600px] object-contain mx-auto"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             )}
 

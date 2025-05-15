@@ -195,11 +195,14 @@ const UseCaseDetail = () => {
 
             {useCase.imageUrl && (
               <div className="mb-12 rounded-xl overflow-hidden">
-                <img
-                  src={useCase.imageUrl}
-                  alt={useCase.title}
-                  className="w-full h-auto object-cover"
-                />
+                <div className="mx-auto" style={{ maxWidth: "800px" }}>
+                  <img
+                    src={useCase.imageUrl}
+                    alt={useCase.title}
+                    className="max-w-full max-h-[600px] object-contain mx-auto"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             )}
 

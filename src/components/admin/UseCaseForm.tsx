@@ -146,7 +146,7 @@ const UseCaseForm = () => {
     { id: "35", name: "Support" },
     { id: "36", name: "Surveys & Forms" },
     { id: "37", name: "Travel" },
-    { id: "38", name: "Website Building" }
+    { id: "38", name: "Website Building" },
   ];
 
   const handleInputChange = (
@@ -220,24 +220,40 @@ const UseCaseForm = () => {
 
   // Modified handleIndustryChange to ensure arrays
   const handleIndustryChange = (value: string[]) => {
-    console.log("handleIndustryChange received:", value, typeof value, Array.isArray(value));
-    
+    console.log(
+      "handleIndustryChange received:",
+      value,
+      typeof value,
+      Array.isArray(value),
+    );
+
     // Ensure value is always an array
-    const safeValue = Array.isArray(value) ? value : 
-                     (value ? [value].flat() : []);
-    
+    const safeValue = Array.isArray(value)
+      ? value
+      : value
+        ? [value].flat()
+        : [];
+
     console.log("Setting industries to:", safeValue);
     setFormData((prev) => ({ ...prev, industries: safeValue }));
   };
 
   // Modified handleCategoryChange to ensure arrays
   const handleCategoryChange = (value: string[]) => {
-    console.log("handleCategoryChange received:", value, typeof value, Array.isArray(value));
-    
+    console.log(
+      "handleCategoryChange received:",
+      value,
+      typeof value,
+      Array.isArray(value),
+    );
+
     // Ensure value is always an array
-    const safeValue = Array.isArray(value) ? value : 
-                     (value ? [value].flat() : []);
-    
+    const safeValue = Array.isArray(value)
+      ? value
+      : value
+        ? [value].flat()
+        : [];
+
     console.log("Setting categories to:", safeValue);
     setFormData((prev) => ({ ...prev, categories: safeValue }));
   };
@@ -306,23 +322,18 @@ const UseCaseForm = () => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
 
-          // Resize to smaller dimensions
+          // Resize to smaller dimensions while preserving aspect ratio and all content
           const maxWidth = 800;
           const maxHeight = 600;
           let width = img.width;
           let height = img.height;
 
-          if (width > height) {
-            if (width > maxWidth) {
-              height *= maxWidth / width;
-              width = maxWidth;
-            }
-          } else {
-            if (height > maxHeight) {
-              width *= maxHeight / height;
-              height = maxHeight;
-            }
-          }
+          // Calculate the scaling factor to fit the entire image
+          const scaleFactor = Math.min(maxWidth / width, maxHeight / height);
+
+          // Apply the scaling factor to both dimensions
+          width = width * scaleFactor;
+          height = height * scaleFactor;
 
           canvas.width = width;
           canvas.height = height;
@@ -343,10 +354,16 @@ const UseCaseForm = () => {
         ...formData,
         content: finalContent,
         imageUrl: finalImageUrl,
-        industries: Array.isArray(formData.industries) ? formData.industries : 
-                  (formData.industries ? [formData.industries].flat() : []),
-        categories: Array.isArray(formData.categories) ? formData.categories : 
-                  (formData.categories ? [formData.categories].flat() : [])
+        industries: Array.isArray(formData.industries)
+          ? formData.industries
+          : formData.industries
+            ? [formData.industries].flat()
+            : [],
+        categories: Array.isArray(formData.categories)
+          ? formData.categories
+          : formData.categories
+            ? [formData.categories].flat()
+            : [],
       };
 
       console.log("Final form data before submission:", finalFormData);

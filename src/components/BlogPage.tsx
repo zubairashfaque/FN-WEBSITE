@@ -39,7 +39,7 @@ const BlogPage = () => {
           search: searchTerm,
           categoryId: activeCategory !== "all" ? activeCategory : undefined,
         });
-        
+
         console.log("Fetched blog posts:", fetchedPosts);
         setPosts(fetchedPosts);
       } catch (error) {
@@ -59,22 +59,21 @@ const BlogPage = () => {
   // Extract unique categories from posts
   const categories = [
     { id: "all", name: "All", slug: "all" },
-    ...Array.from(
-      new Set(posts.map(post => post.category.id))
-    ).map(categoryId => {
-      const post = posts.find(p => p.category.id === categoryId);
-      return {
-        id: categoryId,
-        name: post?.category.name || categoryId,
-        slug: post?.category.slug || categoryId.toLowerCase()
-      };
-    })
+    ...Array.from(new Set(posts.map((post) => post.category.id))).map(
+      (categoryId) => {
+        const post = posts.find((p) => p.category.id === categoryId);
+        return {
+          id: categoryId,
+          name: post?.category.name || categoryId,
+          slug: post?.category.slug || categoryId.toLowerCase(),
+        };
+      },
+    ),
   ];
 
   const filteredPosts = posts.filter((post) => {
     const matchesCategory =
-      activeCategory === "all" ||
-      post.category.id === activeCategory;
+      activeCategory === "all" || post.category.id === activeCategory;
 
     return matchesCategory;
   });
@@ -85,7 +84,7 @@ const BlogPage = () => {
 
       <main className="container mx-auto px-4 py-16 pt-32">
         <BlogHeader />
-        
+
         {/* Search and filter section */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
           <div className="relative w-full md:w-96">
@@ -134,11 +133,17 @@ const BlogPage = () => {
               >
                 <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 border-0 bg-gray-50">
                   <div className="aspect-video w-full overflow-hidden">
-                    <img
-                      src={post.featuredImage}
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
-                    />
+                    <div
+                      className="w-full flex items-center justify-center"
+                      style={{ minHeight: "200px" }}
+                    >
+                      <img
+                        src={post.featuredImage}
+                        alt={post.title}
+                        className="max-w-full max-h-[600px] object-contain transition-transform hover:scale-105 duration-500"
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -149,15 +154,17 @@ const BlogPage = () => {
                         {post.category.name}
                       </Badge>
                       {/* Display all tags if available */}
-                      {post.tags && post.tags.length > 0 && post.tags.map(tag => (
-                        <Badge
-                          key={tag.id}
-                          variant="outline" 
-                          className="capitalize bg-blue-100 text-blue-800 hover:bg-blue-200"
-                        >
-                          {tag.name}
-                        </Badge>
-                      ))}
+                      {post.tags &&
+                        post.tags.length > 0 &&
+                        post.tags.map((tag) => (
+                          <Badge
+                            key={tag.id}
+                            variant="outline"
+                            className="capitalize bg-blue-100 text-blue-800 hover:bg-blue-200"
+                          >
+                            {tag.name}
+                          </Badge>
+                        ))}
                       <span className="text-xs text-gray-500">
                         {post.readTime} min read
                       </span>

@@ -565,11 +565,17 @@ const UseCasesSection = () => {
                   >
                     <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300 border-none bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
                       <div className="h-48 overflow-hidden">
-                        <img
-                          src={useCase.image}
-                          alt={useCase.title}
-                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                        />
+                        <div
+                          className="w-full flex items-center justify-center bg-gray-50"
+                          style={{ minHeight: "200px" }}
+                        >
+                          <img
+                            src={useCase.image}
+                            alt={useCase.title}
+                            className="max-w-full max-h-[200px] object-contain transition-transform duration-500 hover:scale-105"
+                            loading="lazy"
+                          />
+                        </div>
                       </div>
                       <CardHeader>
                         <div className="flex flex-wrap gap-2 mb-2">

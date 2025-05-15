@@ -136,9 +136,8 @@ const BlogEditor = () => {
           const defaultAuthors: Author[] = [
             {
               id: "current_user",
-              name: "Current User",
-              avatar:
-                "https://api.dicebear.com/7.x/avataaars/svg?seed=currentuser",
+              name: "Zubair Ashfaque",
+              avatar: "/assets/zubair-avatar.png",
             },
             {
               id: "admin",

@@ -320,23 +320,21 @@ const CreateBlog = () => {
                                   const canvas =
                                     document.createElement("canvas");
                                   const ctx = canvas.getContext("2d");
-                                  // Resize to smaller dimensions
+                                  // Resize to smaller dimensions while preserving aspect ratio and all content
                                   const maxWidth = 800;
                                   const maxHeight = 600;
                                   let width = img.width;
                                   let height = img.height;
 
-                                  if (width > height) {
-                                    if (width > maxWidth) {
-                                      height *= maxWidth / width;
-                                      width = maxWidth;
-                                    }
-                                  } else {
-                                    if (height > maxHeight) {
-                                      width *= maxHeight / height;
-                                      height = maxHeight;
-                                    }
-                                  }
+                                  // Calculate the scaling factor to fit the entire image
+                                  const scaleFactor = Math.min(
+                                    maxWidth / width,
+                                    maxHeight / height,
+                                  );
+
+                                  // Apply the scaling factor to both dimensions
+                                  width = width * scaleFactor;
+                                  height = height * scaleFactor;
 
                                   canvas.width = width;
                                   canvas.height = height;

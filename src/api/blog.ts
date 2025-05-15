@@ -605,9 +605,8 @@ export const createBlogPost = async (
           slug,
           author: {
             id: "current_user",
-            name: "Current User",
-            avatar:
-              "https://api.dicebear.com/7.x/avataaars/svg?seed=currentuser",
+            name: "Zubair Ashfaque",
+            avatar: "/assets/zubair-avatar.png",
           },
           createdAt: now,
           updatedAt: now,
