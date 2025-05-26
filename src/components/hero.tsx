@@ -143,7 +143,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
                           />
                           {/* Centre-aligned bouncing dot */}
                           <motion.div
-                            className="absolute top-1/2 left-1/2 h-1.5 w-1.5 bg-[#ff3131] rounded-full"
+                            className="absolute top-1/2 left-1/2 h-2 w-2 bg-[#ff3131] rounded-full"
                             style={{
                               translateX: '-50%',
                               translateY: '-50%',
