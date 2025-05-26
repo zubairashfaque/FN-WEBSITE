@@ -129,26 +129,28 @@ const Hero = ({ onContactClick }: HeroProps) => {
                       className="ml-2"
                       style={{ opacity: 1 }}
                     >
-                      <div className="flex items-center justify-center">
-                        <div className="relative h-4 w-4">
-                          <div 
-                            className="absolute inset-0 rounded-full border-2 border-[#ff3131]/20"
-                            style={{ transform: 'scale(1.16221)' }}
-                          />
-                          <motion.div 
-                            className="absolute h-2 w-2 bg-[#ff3131] rounded-full"
-                            style={{ transform: 'translateX(90%) translateY(50%)' }}
-                            animate={{ 
-                              y: [-0.5, 0.5, -0.5],
-                            }}
-                            transition={{
-                              duration: 1.2,
-                              repeat: Infinity,
-                              ease: "easeInOut"
-                            }}
-                          />
-                        </div>
-                      </div>
+                          {/* Red Dot + Outer Ring */}
+                          <div className="flex items-center justify-center">
+                            <div className="relative h-4 w-4">
+                              {/* Outer ring (slightly oversized for the halo effect) */}
+                              <div
+                                className="absolute inset-0 rounded-full border-2 border-[#ff3131]/20"
+                                style={{ transform: 'scale(1.15)' }}
+                              />
+                          
+                              {/* Inner red dot */}
+                              <motion.div
+                                className="absolute top-1/2 left-1/2 h-2 w-2 bg-[#ff3131] rounded-full"
+                                style={{ translateX: '-50%', translateY: '-50%' }}   {/* keeps dot centred */}
+                                animate={{ y: ['-1px', '1px', '-1px'] }}             {/* gentle bounce */}
+                                transition={{
+                                  duration: 1.2,
+                                  repeat: Infinity,
+                                  ease: 'easeInOut',
+                                }}
+                              />
+                            </div>
+                          </div>
                     </motion.div>
                   </motion.span>
                 </AnimatePresence>
