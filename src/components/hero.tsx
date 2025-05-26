@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone } from "lucide-react";
 import { fadeIn, buttonHover, pulseAnimation } from "../lib/motion";
 import { ContactDialog } from "./ContactDialog";
-import { Loading } from "./ui/loading";
 import { AnimatedElement } from "./ui/animated-element";
 
 interface HeroProps {
@@ -128,8 +127,20 @@ const Hero = ({ onContactClick }: HeroProps) => {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       className="ml-2"
+                      style={{ opacity: 1 }}
                     >
-                      <Loading size="sm" />
+                      <div className="flex items-center justify-center">
+                        <div className="relative h-4 w-4">
+                          <div 
+                            className="absolute inset-0 rounded-full border-2 border-[#ff3131]/20" 
+                            style={{ transform: 'scale(1.16221)' }}
+                          />
+                          <div 
+                            className="absolute h-2 w-2 bg-[#ff3131] rounded-full" 
+                            style={{ transform: 'translateX(50%) translateY(99.5596%)' }}
+                          />
+                        </div>
+                      </div>
                     </motion.div>
                   </motion.span>
                 </AnimatePresence>
