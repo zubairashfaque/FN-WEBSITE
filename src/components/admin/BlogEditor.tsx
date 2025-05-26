@@ -135,9 +135,24 @@ const BlogEditor = () => {
           // Fallback for when Supabase is not available
           const defaultAuthors: Author[] = [
             {
-              id: "current_user",
-              name: "Zubair Ashfaque",
-              avatar: "/assets/zubair-avatar.png",
+              id: "omair",
+              name: "Omair",
+              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=omair",
+            },
+            {
+              id: "zubair",
+              name: "Zubair",
+              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=zubair",
+            },
+            {
+              id: "farhan",
+              name: "Farhan",
+              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=farhan",
+            },
+            {
+              id: "ozair",
+              name: "Ozair",
+              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ozair",
             },
             {
               id: "admin",

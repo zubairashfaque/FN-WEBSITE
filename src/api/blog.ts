@@ -205,8 +205,8 @@ const convertSupabaseToBlogPost = async (post: any): Promise<BlogPost> => {
   // Get author
   let author = {
     id: "current_user",
-    name: "Current User",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=currentuser",
+    name: "Zubair",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=zubair",
   };
 
   if (!useLocalStorageFallback() && post.author_id) {
@@ -248,7 +248,7 @@ export const getBlogPosts = async (
   filter?: BlogPostFilter,
 ): Promise<BlogPost[]> => {
   try {
-    const delay = Math.random() * 500 + 200; // Simulate network delay
+    const delay = Math.random() * 200 + 100; // Reduced network delay simulation
     await new Promise((resolve) => setTimeout(resolve, delay));
 
     if (useLocalStorageFallback()) {
@@ -605,8 +605,8 @@ export const createBlogPost = async (
           slug,
           author: {
             id: "current_user",
-            name: "Zubair Ashfaque",
-            avatar: "/assets/zubair-avatar.png",
+            name: "Zubair",
+            avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=zubair",
           },
           createdAt: now,
           updatedAt: now,

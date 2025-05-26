@@ -1,5 +1,6 @@
 import { Suspense, lazy, useState, useEffect } from "react";
 import { Routes, Route, useRoutes } from "react-router-dom";
+import { createChat } from "@n8n/chat";
 import ErrorBoundary from "./components/admin/ErrorBoundary";
 import Home from "./components/home";
 import BlogPage from "./components/BlogPage";
@@ -23,6 +24,25 @@ const UseCaseForm = lazy(() => import("./components/admin/UseCaseForm"));
 function App() {
   const [tempoRoutes, setTempoRoutes] = useState<any[] | null>(null);
   const [routesLoaded, setRoutesLoaded] = useState(false);
+
+  // Initialize chatbot
+  useEffect(() => {
+    try {
+      // Make sure the chat is only initialized once
+      if (!window.n8nChat) {
+        createChat({
+          webhookUrl:
+            "https://1a48-94-156-149-89.ngrok-free.app/webhook/96e68b05-c31f-40c8-a9ed-954c80546c56/chat",
+          position: "bottom-right",
+          greeting: "Hello! How can I help you today?",
+          title: "Futurnod Chat",
+        });
+        console.log("Chat initialized successfully");
+      }
+    } catch (error) {
+      console.error("Failed to initialize chat:", error);
+    }
+  }, []);
 
   // Load tempo routes only when in Tempo environment
   useEffect(() => {

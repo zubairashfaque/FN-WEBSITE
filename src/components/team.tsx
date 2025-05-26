@@ -18,8 +18,7 @@ const Team = () => {
         "AI-Driven Process Automation | Business Intelligence | Risk Modeling",
       description:
         "Omair specializes in AI-powered automation and data-driven strategy, helping businesses streamline workflows, optimize operations, and enhance decision-making. With experience in financial AI, business intelligence, and automation tools, he ensures that AI solutions deliver real-world efficiency and scalability.",
-      image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=omair",
     },
     {
       name: "Zubair A.",
@@ -27,8 +26,7 @@ const Team = () => {
       skills: "Generative AI | Intelligent Chatbots | Predictive Analytics",
       description:
         "Zubair is the architect of AI-powered automation, pioneer in Agentic AI models, specializing in chatbots, NLP models, and AI-driven decision-making tools. His experience in Large Language Models (LLMs), RAG-based assistants, and AI-powered customer support systems enables businesses to automate workflows and enhance customer interactions with AI-driven efficiency.",
-      image:
-        "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=800&q=80",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=zubair",
     },
     {
       name: "Farhan Mushtaq",
@@ -37,8 +35,7 @@ const Team = () => {
         "AI Product Validation | Enterprise AI Solutions | Business Growth",
       description:
         "Farhan is a strategic AI leader with a Ph.D. in Data Science and extensive experience in enterprise AI deployment. He helps businesses scale AI-driven automation, ensuring that AI solutions are practical, efficient, and deliver measurable results. His expertise in AI validation and workflow automation ensures that organizations maximize efficiency and reduce operational bottlenecks.",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=farhan",
     },
     {
       name: "Ozair A.",
@@ -47,8 +44,7 @@ const Team = () => {
         "Full-Stack Development | AI Workflow Integration | Cybersecurity",
       description:
         "Ozair ensures the seamless integration of AI into business processes, focusing on secure, scalable software solutions. With expertise in full-stack development, cloud infrastructure, and AI-driven automation, he builds platforms that optimize business workflows, enhance security, and drive efficiency through intelligent automation.",
-      image:
-        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&q=80",
+      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=ozair",
     },
   ];
 

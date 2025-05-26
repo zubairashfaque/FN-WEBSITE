@@ -7,8 +7,8 @@ interface BlogAuthorDisplayProps {
 }
 
 const BlogAuthorDisplay: React.FC<BlogAuthorDisplayProps> = ({
-  name = "Zubair Ashfaque",
-  avatar = "/assets/zubair-avatar.png",
+  name = "Zubair",
+  avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=zubair",
   date = "May 11, 2023",
 }) => {
   return (

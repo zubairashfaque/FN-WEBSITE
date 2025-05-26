@@ -28,6 +28,7 @@ const BlogPage = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [displayCount, setDisplayCount] = useState(6);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -38,6 +39,7 @@ const BlogPage = () => {
           status: "published",
           search: searchTerm,
           categoryId: activeCategory !== "all" ? activeCategory : undefined,
+          limit: 100, // Fetch all posts but only display a limited number
         });
 
         console.log("Fetched blog posts:", fetchedPosts);
@@ -49,7 +51,12 @@ const BlogPage = () => {
       }
     };
 
-    fetchPosts();
+    // Add a small delay to prevent too many API calls when typing
+    const timer = setTimeout(() => {
+      fetchPosts();
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [searchTerm, activeCategory]);
 
   const handleContactClick = () => {
@@ -124,7 +131,7 @@ const BlogPage = () => {
           </div>
         ) : filteredPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {filteredPosts.map((post, index) => (
+            {filteredPosts.slice(0, displayCount).map((post, index) => (
               <motion.div
                 key={post.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -233,18 +240,20 @@ const BlogPage = () => {
           </div>
         )}
 
-        <div className="flex justify-center mt-12">
-          <Button
-            variant="outline"
-            className="gap-2 border-gray-300 hover:bg-gray-50"
-            onClick={() => {
-              console.log("Loading more articles...");
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-          >
-            Load More Articles <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
+        {filteredPosts.length > displayCount && (
+          <div className="flex justify-center mt-12">
+            <Button
+              variant="outline"
+              className="gap-2 border-gray-300 hover:bg-gray-50"
+              onClick={() => {
+                console.log("Loading more articles...");
+                setDisplayCount((prevCount) => prevCount + 6);
+              }}
+            >
+              Load More Articles <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </main>
 
       <Footer />
