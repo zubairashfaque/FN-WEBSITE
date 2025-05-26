@@ -26,7 +26,7 @@ const Team = () => {
       skills: "Generative AI | Intelligent Chatbots | Predictive Analytics",
       description:
         "Zubair is the architect of AI-powered automation, pioneer in Agentic AI models, specializing in chatbots, NLP models, and AI-driven decision-making tools. His experience in Large Language Models (LLMs), RAG-based assistants, and AI-powered customer support systems enables businesses to automate workflows and enhance customer interactions with AI-driven efficiency.",
-      image: "/assets/Zubair.png",
+      image: "/assets/Zubair_A.png",
     },
     {
       name: "Farhan Mushtaq",
