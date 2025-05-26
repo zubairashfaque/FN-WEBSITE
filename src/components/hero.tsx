@@ -137,7 +137,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
                           />
                           <motion.div 
                             className="absolute h-2 w-2 bg-[#ff3131] rounded-full"
-                            style={{ transform: 'translateX(60%) translateY(50%)' }}
+                            style={{ transform: 'translateX(90%) translateY(50%)' }}
                             animate={{ 
                               y: [-0.5, 0.5, -0.5],
                             }}
