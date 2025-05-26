@@ -134,7 +134,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
                           <motion.div 
                             className="absolute inset-0 rounded-full border-2 border-[#ff3131]/20"
                             animate={{ 
-                              scale: [1, 1.16221, 1],
+                              scale: [1.16221, 1.3, 1.16221],
                             }}
                             transition={{
                               duration: 1.5,
@@ -144,11 +144,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
                           />
                           <motion.div 
                             className="absolute h-2 w-2 bg-[#ff3131] rounded-full"
-                            style={{
-                              left: '50%',
-                              top: '50%',
-                              transform: 'translate(-50%, -50%)'
-                            }}
+                            style={{ transform: 'translateX(50%) translateY(99.5596%)' }}
                             animate={{ 
                               y: [-0.5, 0.5, -0.5],
                             }}
