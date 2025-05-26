@@ -1,35 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Phone } from "lucide-react";
-import { fadeIn, buttonHover, pulseAnimation } from "../lib/motion";
-import { ContactDialog } from "./ContactDialog";
-import { AnimatedElement } from "./ui/animated-element";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Phone } from 'lucide-react';
+
+import { ContactDialog } from './ContactDialog';
+import { AnimatedElement } from './ui/animated-element';
+
+/* -------------------------------------------------- */
+/* Config & helpers                                   */
+/* -------------------------------------------------- */
 
 interface HeroProps {
   onContactClick?: () => void;
 }
 
 const DYNAMIC_WORDS = [
-  "Growth",
-  "CRM Management",
-  "Web Scraping",
-  "Customer Support",
-  "Lead Generation",
-  "Process Automation",
+  'Growth',
+  'CRM Management',
+  'Web Scraping',
+  'Customer Support',
+  'Lead Generation',
+  'Process Automation',
 ];
 
-const pathVariants = {
-  hidden: { pathLength: 0, opacity: 1 },
-  visible: {
-    pathLength: 1,
-    opacity: 1,
-    transition: { duration: 1.5, ease: "easeInOut" },
-  },
-};
-
+/* Hand-drawn underline used twice in the tagline */
 function HandDrawnUnderline({
   width,
-  offsetX,
+  offsetX = 0,
 }: {
   width: number;
   offsetX?: number;
@@ -40,38 +36,43 @@ function HandDrawnUnderline({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="absolute bottom-[-6px] h-[14px]"
-      style={{ width, left: offsetX || 0 }}
+      style={{ width, left: offsetX }}
     >
       <motion.path
-        d={`M3 20 C${width * 0.25} 30, ${width * 0.5} 10, ${width * 0.75} 25, ${width - 5} 10`}
+        d={`M3 20 C${width * 0.25} 30, ${width * 0.5} 10, ${width * 0.75} 25, ${
+          width - 5
+        } 10`}
         stroke="#ff3131"
         strokeWidth="6"
         fill="transparent"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 1.5, ease: "easeInOut" }}
+        transition={{ duration: 1.5, ease: 'easeInOut' }}
       />
     </svg>
   );
 }
 
+/* -------------------------------------------------- */
+/* Component                                          */
+/* -------------------------------------------------- */
+
 const Hero = ({ onContactClick }: HeroProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
 
+  /* Rotate “For … ” word every 2 s */
   useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % DYNAMIC_WORDS.length);
-    }, 2000);
-    return () => clearInterval(interval);
+    const id = setInterval(
+      () => setWordIndex((prev) => (prev + 1) % DYNAMIC_WORDS.length),
+      2000
+    );
+    return () => clearInterval(id);
   }, []);
 
   const handleContactClick = () => {
-    if (onContactClick) {
-      onContactClick();
-    } else {
-      setDialogOpen(true);
-    }
+    if (onContactClick) onContactClick();
+    else setDialogOpen(true);
   };
 
   return (
@@ -84,6 +85,9 @@ const Hero = ({ onContactClick }: HeroProps) => {
             delay={0.3}
             className="space-y-8"
           >
+            {/* ----------------------------------------- */}
+            {/* Headline                                 */}
+            {/* ----------------------------------------- */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
               <AnimatedElement
                 animation="fadeIn"
@@ -92,7 +96,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
                 as="span"
                 className="inline-block"
               >
-                We Build
+                We&nbsp;Build
               </AnimatedElement>
               <br />
               <AnimatedElement
@@ -102,7 +106,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
                 as="span"
                 className="inline-block"
               >
-                AI Automations
+                AI&nbsp;Automations
               </AnimatedElement>
               <br />
               <AnimatedElement
@@ -112,7 +116,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
                 as="span"
                 className="inline-block"
               >
-                For{" "}
+                For&nbsp;
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={wordIndex}
@@ -122,41 +126,46 @@ const Hero = ({ onContactClick }: HeroProps) => {
                     className="inline-flex items-center gap-2 text-gray-500"
                   >
                     {DYNAMIC_WORDS[wordIndex]}
+
+                    {/* Red-dot logo element */}
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       className="ml-2"
-                      style={{ opacity: 1 }}
                     >
-                          {/* Red Dot + Outer Ring */}
-                          <div className="flex items-center justify-center">
-                            <div className="relative h-4 w-4">
-                              {/* Outer ring (slightly oversized for the halo effect) */}
-                              <div
-                                className="absolute inset-0 rounded-full border-2 border-[#ff3131]/20"
-                                style={{ transform: 'scale(1.15)' }}
-                              />
-                          
-                              {/* Inner red dot */}
-                              <motion.div
-                                className="absolute top-1/2 left-1/2 h-2 w-2 bg-[#ff3131] rounded-full"
-                                style={{ translateX: '-50%', translateY: '-50%' }}   {/* keeps dot centred */}
-                                animate={{ y: ['-1px', '1px', '-1px'] }}             {/* gentle bounce */}
-                                transition={{
-                                  duration: 1.2,
-                                  repeat: Infinity,
-                                  ease: 'easeInOut',
-                                }}
-                              />
-                            </div>
-                          </div>
+                      <div className="flex items-center justify-center">
+                        <div className="relative h-4 w-4">
+                          {/* Halo ring */}
+                          <div
+                            className="absolute inset-0 rounded-full border-2 border-[#ff3131]/20"
+                            style={{ transform: 'scale(1.15)' }}
+                          />
+                          {/* Centre-aligned bouncing dot */}
+                          <motion.div
+                            className="absolute top-1/2 left-1/2 h-2 w-2 bg-[#ff3131] rounded-full"
+                            style={{
+                              translateX: '-50%',
+                              translateY: '-50%',
+                            }}
+                            animate={{ y: ['-1px', '1px', '-1px'] }}
+                            transition={{
+                              duration: 1.2,
+                              repeat: Infinity,
+                              ease: 'easeInOut',
+                            }}
+                          />
+                        </div>
+                      </div>
                     </motion.div>
                   </motion.span>
                 </AnimatePresence>
               </AnimatedElement>
             </h1>
 
+            {/* ----------------------------------------- */}
+            {/* Tagline                                   */}
+            {/* ----------------------------------------- */}
             <AnimatedElement
               animation="fadeIn"
               direction="up"
@@ -172,8 +181,8 @@ const Hero = ({ onContactClick }: HeroProps) => {
               >
                 NODDING
                 <HandDrawnUnderline width={210} offsetX={-68} />
-              </AnimatedElement>{" "}
-              <span className="text-black">to the</span>{" "}
+              </AnimatedElement>{' '}
+              <span className="text-black">to&nbsp;the&nbsp;</span>
               <AnimatedElement
                 animation="pulse"
                 duration={3}
@@ -182,12 +191,17 @@ const Hero = ({ onContactClick }: HeroProps) => {
               >
                 FUTURE
                 <HandDrawnUnderline width={155} offsetX={-50} />
-              </AnimatedElement>{" "}
-              - We transform businesses through innovative AI solutions,
-              creating seamless experiences that define tomorrow's technology.
+              </AnimatedElement>{' '}
+              – We transform businesses through innovative AI solutions,
+              creating seamless experiences that define tomorrow&apos;s
+              technology.
             </AnimatedElement>
 
+            {/* ----------------------------------------- */}
+            {/* CTA buttons                               */}
+            {/* ----------------------------------------- */}
             <div className="relative inline-flex items-center">
+              {/* Main button */}
               <AnimatedElement
                 animation="hover"
                 as="button"
@@ -195,10 +209,11 @@ const Hero = ({ onContactClick }: HeroProps) => {
                 onClick={handleContactClick}
                 duration={0.2}
               >
-                <span>Let's talk</span>
+                <span>Let&apos;s talk</span>
                 <span className="w-[64px]" />
               </AnimatedElement>
 
+              {/* Icon button (overlay) */}
               <AnimatedElement
                 animation="hover"
                 as="button"
@@ -206,8 +221,8 @@ const Hero = ({ onContactClick }: HeroProps) => {
                 onClick={handleContactClick}
                 motionProps={{
                   whileHover: {
-                    boxShadow: "0px 5px 15px rgba(0,0,0,0.1)",
-                    backgroundColor: "rgb(249 250 251)",
+                    boxShadow: '0px 5px 15px rgba(0,0,0,0.1)',
+                    backgroundColor: 'rgb(249 250 251)',
                   },
                 }}
               >
@@ -218,6 +233,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
         </div>
       </div>
 
+      {/* Contact modal */}
       <ContactDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </section>
   );
