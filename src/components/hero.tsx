@@ -131,20 +131,13 @@ const Hero = ({ onContactClick }: HeroProps) => {
                     >
                       <div className="flex items-center justify-center">
                         <div className="relative h-4 w-4">
-                          <motion.div 
+                          <div 
                             className="absolute inset-0 rounded-full border-2 border-[#ff3131]/20"
-                            animate={{ 
-                              scale: [1.16221, 1.3, 1.16221],
-                            }}
-                            transition={{
-                              duration: 1.5,
-                              repeat: Infinity,
-                              ease: "easeInOut"
-                            }}
+                            style={{ transform: 'scale(1.16221)' }}
                           />
                           <motion.div 
                             className="absolute h-2 w-2 bg-[#ff3131] rounded-full"
-                            style={{ transform: 'translateX(50%) translateY(99.5596%)' }}
+                            style={{ transform: 'translateX(50%) translateY(50%)' }}
                             animate={{ 
                               y: [-0.5, 0.5, -0.5],
                             }}
