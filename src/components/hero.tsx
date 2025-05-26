@@ -137,23 +137,21 @@ const Hero = ({ onContactClick }: HeroProps) => {
                               scale: [1, 1.16221, 1],
                             }}
                             transition={{
-                              duration: 2,
+                              duration: 1.5,
                               repeat: Infinity,
                               ease: "easeInOut"
                             }}
                           />
                           <motion.div 
-                            className="absolute h-2 w-2 bg-[#ff3131] rounded-full"
+                            className="absolute h-2 w-2 bg-[#ff3131] rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                             animate={{ 
-                              x: [0, 2, 0],
-                              y: [0, 4, 0],
+                              y: [-2, 2, -2],
                             }}
                             transition={{
-                              duration: 2,
+                              duration: 1.2,
                               repeat: Infinity,
                               ease: "easeInOut"
                             }}
-                            style={{ transform: 'translateX(50%) translateY(99.5596%)' }}
                           />
                         </div>
                       </div>
